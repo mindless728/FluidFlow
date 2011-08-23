@@ -34,8 +34,6 @@ public class BlockChanger implements Runnable {
 		runTime = plugin.getConfig().getInt("BlockChanger.runTime", runTime);
 		changeCountPerIter = plugin.getConfig().getInt("BlockChanger.changeCountPerIter", changeCountPerIter);
 		plugin.getConfig().save();
-
-		System.out.println(runTime+" : "+changeCountPerIter);
 	}
 
 	/**

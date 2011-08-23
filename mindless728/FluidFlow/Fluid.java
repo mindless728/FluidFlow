@@ -36,7 +36,7 @@ public abstract class Fluid extends JavaPlugin implements Runnable {
 	private int sleepTime = 100000;
 
 	/** the configuration for the plugin */
-	protected Configuration config;
+	private Configuration config;
 
 	/**
 	 * lets all fluids know about each other's changes, for synchronizing between
@@ -76,6 +76,10 @@ public abstract class Fluid extends JavaPlugin implements Runnable {
 
 		//get the configuration for the plugin
 		config = new Configuration(new File(plugin.getDataFolder().getPath()+File.separator+getDescription().getName()+".yml"));
+		config.save();
+
+		//initialize the fluid
+		init(config);
 		config.save();
 		
 		//start the fluid's asynchronous thread
@@ -230,6 +234,15 @@ public abstract class Fluid extends JavaPlugin implements Runnable {
 	}
 
 	/**
+	 * gets the config file from the Fluid
+	 *
+	 * @return the configuration file for the fluid
+	 */
+	protected Configuration getConfig() {
+		return config;
+	}
+
+	/**
 	 * abstract method to get the material used by the fluid
 	 *
 	 * @return the material type the fluid uses, DO NOT RETURN NULL
@@ -242,4 +255,11 @@ public abstract class Fluid extends JavaPlugin implements Runnable {
 	 * @param block the fluid block that is trying to flow
 	 */
 	public abstract void flow(FluidBlock block);
+
+	/**
+	 * called so that the fluid can initialize itself and load configuration
+	 *
+	 * @param config the configuration file of the fluid
+	 */
+	public abstract void init(Configuration config);
 }
