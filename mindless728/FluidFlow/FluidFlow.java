@@ -1,12 +1,12 @@
 package mindless728.FluidFlow;
 
-import org.bukkit.Location;
-
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type; 
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.config.Configuration;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -31,6 +31,9 @@ public class FluidFlow extends JavaPlugin {
 	/** the object that changes the blocks from the async threads */
 	private BlockChanger blockChanger;
 
+	/** the configruation file object */
+	private Configuration config;
+
 	/** Default Constructor */
 	public FluidFlow() {
 		//basically allocate all of the objects needed
@@ -38,7 +41,6 @@ public class FluidFlow extends JavaPlugin {
 		registeredF = new HashMap<Fluid, Material>();
 		changedBlocks = new HashMap<Fluid, ChangedBlocks>();
 		blockListener = new FluidBlockListener(this);
-		blockChanger = new BlockChanger(changedBlocks);
 
 		//set the structure all fluids can see for changed blocks
 		Fluid.setAllChanges(changedBlocks);
@@ -46,7 +48,14 @@ public class FluidFlow extends JavaPlugin {
 
 	/**	called when the plugin is enabled */
 	public void onEnable() {
+		//get the configuration object
+		if(!getDataFolder().exists())
+			getDataFolder().mkdir();
+		config = new Configuration(new File(getDataFolder().getPath()+File.separator+getDescription().getName()+".yml"));
+		config.load();
+
 		//schedule the block changer
+		blockChanger = new BlockChanger(changedBlocks, this);
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, blockChanger, 1, 1);
 
 		//register the block based events
@@ -194,5 +203,14 @@ public class FluidFlow extends JavaPlugin {
 		else if(type == Material.STATIONARY_LAVA)
 			type = Material.LAVA;
 		return registeredM.get(type);
+	}
+
+	/**
+	 * gets the configruation file object from the base plugin
+	 *
+	 * @return the configuration file object
+	 */
+	protected Configuration getConfig() {
+		return config;
 	}
 }

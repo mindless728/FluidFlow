@@ -2,7 +2,9 @@ package mindless728.FluidFlow;
 
 import org.bukkit.Material;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.config.Configuration;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -32,6 +34,9 @@ public abstract class Fluid extends JavaPlugin implements Runnable {
 
 	/** the sleep time to wait if there are no flows, in nano-seconds */
 	private int sleepTime = 100000;
+
+	/** the configuration for the plugin */
+	protected Configuration config;
 
 	/**
 	 * lets all fluids know about each other's changes, for synchronizing between
@@ -64,6 +69,14 @@ public abstract class Fluid extends JavaPlugin implements Runnable {
 			getServer().getPluginManager().disablePlugin(this);
 			return;
 		}
+
+		//grab the sleep timer
+		sleepTime = plugin.getConfig().getInt("Fluid.sleepTime",sleepTime);
+		plugin.getConfig().save();
+
+		//get the configuration for the plugin
+		config = new Configuration(new File(plugin.getDataFolder().getPath()+File.separator+getDescription().getName()+".yml"));
+		config.save();
 		
 		//start the fluid's asynchronous thread
 		start();

@@ -13,18 +13,29 @@ public class BlockChanger implements Runnable {
 	private HashMap<Fluid, ChangedBlocks> blockChanges;
 
 	/** the amount of time per server tick the block changer runs for in nano-seconds */
-	private long runTime = 10000000;
+	private int runTime = 10000000;
 
 	/** the amount of blocks that are changed per round through the block changer */
 	private int changeCountPerIter = 1000;
+
+	/** the FluidFlow plugin object */
+	FluidFlow plugin;
+	
 
 	/**
 	 * Default constructor taking in the mapping from fluids to the changed blocks
 	 *
 	 * @param bc the mapping from fluids to changed blocks
 	 */
-	public BlockChanger(HashMap<Fluid, ChangedBlocks> bc) {
+	public BlockChanger(HashMap<Fluid, ChangedBlocks> bc, FluidFlow p) {
 		blockChanges = bc;
+		plugin = p;
+
+		runTime = plugin.getConfig().getInt("BlockChanger.runTime", runTime);
+		changeCountPerIter = plugin.getConfig().getInt("BlockChanger.changeCountPerIter", changeCountPerIter);
+		plugin.getConfig().save();
+
+		System.out.println(runTime+" : "+changeCountPerIter);
 	}
 
 	/**
